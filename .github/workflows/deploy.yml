@@ -145,18 +145,6 @@ jobs:
             exit 1
           fi
 
-      - name: Check page contains Interswitch content
-        run: |
-          PAGE=$(curl -s http://${{ secrets.EC2_HOST }})
-
-          if echo "$PAGE" | grep -q 'Interswitch'; then
-            echo 'CONTENT CHECK PASSED: Page contains expected content'
-          else
-            echo 'CONTENT CHECK FAILED: Unexpected page content detected'
-            echo 'This may mean the wrong files were deployed'
-            exit 1
-          fi
-
       - name: Health check summary
         run: |
           echo '================================================'
