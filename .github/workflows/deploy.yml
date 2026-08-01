@@ -97,7 +97,7 @@ jobs:
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
             'sudo mkdir -p /usr/share/nginx/html && \
              sudo cp /tmp/interswitch_web/* /usr/share/nginx/html/ && \
-             sudo chown -R nginx:nginx /usr/share/nginx/html/ && \
+             sudo chown -R www-data:www-data /usr/share/nginx/html/ && \
              sudo chmod -R 755 /usr/share/nginx/html/'
 
       - name: Verify Nginx is still running
