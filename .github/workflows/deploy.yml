@@ -88,17 +88,21 @@ jobs:
       - name: Copy web files to EC2
         run: |
           echo 'Copying files to EC2...'
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
+            'mkdir -p /tmp/interswitch_web'
           scp -i ~/.ssh/deploy_key -r web/* \
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/interswitch_web/
-
+            
       - name: Install files to Nginx web root
         run: |
           ssh -i ~/.ssh/deploy_key \
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
-            'sudo mkdir -p /usr/share/nginx/html && \
-             sudo cp /tmp/interswitch_web/* /usr/share/nginx/html/ && \
-             sudo chown -R www-data:www-data /usr/share/nginx/html/ && \
-             sudo chmod -R 755 /usr/share/nginx/html/'
+            'sudo mkdir -p /var/www/html && \
+             sudo rm -rf /var/www/html/* && \
+             sudo cp -r /tmp/interswitch_web/* /var/www/html/ && \
+             sudo chown -R www-data:www-data /var/www/html/ && \
+             sudo chmod -R 755 /var/www/html/'
 
       - name: Verify Nginx is still running
         run: |
