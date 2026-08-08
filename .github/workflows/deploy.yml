@@ -2,12 +2,7 @@ name: Interswitch Portal — CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
-    branches:
-      - main    
-
+    
 jobs:
 
   # ================================================
