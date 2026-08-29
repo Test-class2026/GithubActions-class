@@ -11,7 +11,7 @@ WORKDIR /app
 ENV NODE_ENV=production PORT=3000 
 
 # Never run as root - Week 14 covers why in depth 
-RUN addgroup --system portal & & adduser --system --ingroup portal portal 
+RUN addgroup --system portal && adduser --system --ingroup portal portal 
 
 # Copy only what the application needs in order to run COPY --from=build /app/node_modules ./node_modules 
 COPY --from=build /app/package.json ./package.json 
