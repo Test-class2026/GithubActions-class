@@ -36,3 +36,37 @@ main { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
 footer { background-color: #1A2B4A; color: #aaa; text-align: center;
          padding: 20px; margin-top: 40px; font-size: 0.85rem; }
 .deploy-info { color: #E8A020; margin-top: 6px; font-size: 0.8rem; }
+.header-content{display:flex;justify-content:space-between;align-items:center;}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.live-clock{font-size:1.4rem;font-weight:bold;color:#E8A020;font-family:'Courier New',monospace;letter-spacing:2px;}
+.status-badge{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#ccc;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4CAF50;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
+.btn-primary{background:#E8A020;color:white;padding:12px 28px;border-radius:4px;
+  text-decoration:none;font-weight:bold;border:none;cursor:pointer;font-size:1rem;}
+.btn-secondary{background:transparent;color:#E8A020;padding:12px 28px;border-radius:4px;
+  text-decoration:none;font-weight:bold;border:2px solid #E8A020;cursor:pointer;font-size:1rem;}
+.btn-primary:hover{background:#c8880e;} .btn-secondary:hover{background:rgba(232,160,32,0.1);}
+.stat-trend{font-size:0.75rem;color:#4CAF50;margin-top:4px;display:block;}
+.system-status{background:white;border-radius:8px;padding:40px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:30px;}
+.system-status h2{color:#1A2B4A;margin-bottom:24px;}
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.status-card{padding:16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;}
+.status-card.operational{background:#E8F5E9;border-left:4px solid #4CAF50;}
+.status-card.maintenance{background:#FFF8E1;border-left:4px solid #FFC107;}
+.service-name{font-weight:bold;color:#1A2B4A;} .service-status{font-size:0.85rem;color:#555;}
+.register-form{max-width:500px;}
+.form-group{margin-bottom:20px;}
+.form-group label{display:block;font-weight:bold;color:#1A2B4A;margin-bottom:6px;font-size:0.9rem;}
+.form-group input,.form-group select{width:100%;padding:10px 14px;border:1px solid #ddd;
+  border-radius:4px;font-size:1rem;color:#333;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:#E8A020;}
+.form-message{margin-top:16px;padding:12px;border-radius:4px;font-size:0.9rem;}
+.form-message.success{background:#E8F5E9;color:#2E7D32;border-left:4px solid #4CAF50;}
+.form-message.error{background:#FDECEA;color:#C62828;border-left:4px solid #C62828;}
+.footer-content{text-align:center;} .deploy-info{color:#E8A020;margin-top:6px;font-size:0.8rem;}
+.status-card { flex-direction:column; align-items:flex-start; gap:6px; }
+.service-meta { font-size:0.75rem; color:#888; display:block; margin-top:2px; }
+.status-grid  { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }

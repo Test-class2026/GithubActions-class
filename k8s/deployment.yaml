@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal
+spec:
+  replicas: 2                     # Keep two Pods running at all times
+  selector:
+    matchLabels:
+      app: portal                 # Which Pods this Deployment owns
+  template:                       # ---- the Pod template starts here ---
+    metadata:
+      labels:
+        app: portal               # Must match the selector above
+    spec:
+      containers:
+        - name: portal
+          image: felixanxy/interswitch-portal:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: '3000

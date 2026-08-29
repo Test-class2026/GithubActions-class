@@ -3,48 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interswitch Merchant Page</title>
+    <title>Interswitch Merchant Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header>
         <div class="header-content">
-            <h1>Interswitch</h1>
-            <p class="tagline">Africa's Payment system and Infrastructure</p>
+            <div class="brand">
+                <h1>Interswitch New Heading</h1>
+                <p class="tagline">Africa's Payment Infrastructure — Powered by CI/CD &amp; Docker</p>
+            </div>
+            <div class="header-right">
+                <div class="live-clock" id="clock">00:00:00</div>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span>Systems Operational</span>
+                </div>
+            </div>
         </div>
     </header>
-
     <main>
         <section class="hero">
-            <h2>Merchant Onboarding Page</h2>
+            <h2>Merchant Onboarding Portal</h2>
             <p>Register your business to start accepting payments across Nigeria and Africa.</p>
-            <a href="#register" class="btn">Start Registration</a>
+            <div class="hero-actions">
+                <a href="#register" class="btn btn-primary">Start Registration</a>
+                <a href="#status" class="btn btn-secondary">System Status</a>
+            </div>
         </section>
-
         <section class="stats">
-            <div class="stat-card"><h3>200,000+</h3><p>Active Merchants</p></div>
-            <div class="stat-card"><h3>34</h3><p>African Countries</p></div>
-            <div class="stat-card"><h3>99.9%</h3><p>Uptime SLA</p></div>
+            <div class="stat-card">
+                <h3 class="counter" data-target="200000">0</h3>
+                <p>Active Merchants</p><span class="stat-trend">+12% this month</span>
+            </div>
+            <div class="stat-card">
+                <h3 class="counter" data-target="34">0</h3>
+                <p>African Countries</p><span class="stat-trend">Expanding</span>
+            </div>
+            <div class="stat-card">
+                <h3 class="counter" data-target="999">0</h3>
+                <p>Uptime per 1000</p><span class="stat-trend">99.9% SLA</span>
+            </div>
+            <div class="stat-card">
+                <h3 class="counter" data-target="4200000">0</h3>
+                <p>Daily Transactions</p><span class="stat-trend">+8% this week</span>
+            </div>
         </section>
-
+        <section class="system-status" id="status">
+            <h2>System Status</h2>
+            <div class="status-grid" id="statusGrid"></div>
+        </section>
         <section class="register" id="register">
             <h2>Register Your Business</h2>
-            <table class="register-table">
-                <tr><th>Field</th><th>Details</th></tr>
-                <tr><td>Business Name</td><td>Your registered company name</td></tr>
-                <tr><td>RC Number</td><td>CAC registration number</td></tr>
-                <tr><td>Business Type</td><td>Retail / E-commerce / Service</td></tr>
-                <tr><td>Settlement Account</td><td>Bank account for payment settlements</td></tr>
-            </table>
-            <p class="note">Contact <strong>merchant@interswitch.com</strong> to begin.</p>
+            <div class="register-form">
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" id="businessName" placeholder="Your registered company name">
+                </div>
+                <div class="form-group">
+                    <label>RC Number</label>
+                    <input type="text" id="rcNumber" placeholder="CAC registration number">
+                </div>
+                <div class="form-group">
+                    <label>Business Email</label>
+                    <input type="email" id="email" placeholder="official@company.com">
+                </div>
+                <div class="form-group">
+                    <label>Business Type</label>
+                    <select id="businessType">
+                        <option value="">Select type</option>
+                        <option>Retail</option>
+                        <option>E-commerce</option>
+                        <option>Service Provider</option>
+                        <option>Financial Services</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="submitForm()">Submit Application</button>
+                <div id="formMessage" class="form-message"></div>
+            </div>
         </section>
     </main>
-
     <footer>
         <p>&copy; 2024 Interswitch Group. All rights reserved.</p>
-        <p class="deploy-info">Deployed automatically via GitHub Actions CI/CD Pipeline</p>
+        <p class="deploy-info">Running in Docker Container &bull; Deployed via CI/CD Pipeline</p>
     </footer>
-
+    <script src="app.js"></script>
 </body>
 </html>

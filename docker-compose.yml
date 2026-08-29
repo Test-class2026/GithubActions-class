@@ -1,0 +1,44 @@
+# ================================================
+# docker-compose.yml
+# Interswitch Merchant Portal Stack
+# Services: portal (frontend) + api (payment status)
+# ================================================
+
+version: '3.8'
+
+services:
+
+  # ------------------------------------------------
+  # SERVICE 1: Payment API
+  # Provides live payment system status data
+  # ------------------------------------------------
+  api:
+    image: felixanxy/interswitch-api:v1   # Override: pull from Hub, don't build
+    build: !reset null                         # Remove build config for production
+    container_name: interswitch-api
+    ports:
+      - '${API_PORT}:${API_PORT}'
+    environment:
+      - PORT=${API_PORT}
+      - NODE_ENV=${NODE_ENV}
+    restart: unless-stopped     # Restart if it crashes, stop only on explicit stop
+
+  # ------------------------------------------------
+  # SERVICE 2: Merchant Portal
+  # HTML/CSS/JS frontend + Node.js proxy to the API
+  # ------------------------------------------------
+  portal:
+    image: felixanxy/interswitch-portal:v1
+    build: !reset null
+    container_name: interswitch-portal
+    ports:
+      - '${PORTAL_PORT}:${PORTAL_PORT}'
+    environment:
+      - PORT=${PORTAL_PORT}
+      - NODE_ENV=${NODE_ENV}
+      - API_URL=${API_URL}
+    depends_on:
+      - api                     # Start api before portal
+    restart: unless-stopped
+    volumes:
+      - ./web:/app/web    # Bind mount: local web/ syncs into container's /app/web

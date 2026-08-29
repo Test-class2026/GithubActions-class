@@ -1,0 +1,54 @@
+name: Build and Deploy to k3s
+ 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:          # lets you run it by hand from the Actions tab
+ 
+env:
+  IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/interswitch-portal
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+ 
+      - name: Derive an image tag from the commit SHA
+        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+ 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+ 
+      - name: Build and push the portal image
+        run: |
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
+ 
+      - name: Copy the manifests to the cluster
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "k8s/*"
+          target: "/home/ubuntu/interswitch"
+ 
+      - name: Apply the manifests and roll out the new image
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/interswitch
+            kubectl apply -f k8s/
+            kubectl set image deployment/portal \
+              portal=${{ env.IMAGE }}:${{ env.TAG }}
+            kubectl rollout status deployment/portal --timeout=120s
+            kubectl get pods -l app=portal
