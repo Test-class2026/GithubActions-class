@@ -13,21 +13,27 @@ const fetch = require('node-fetch');
 const API_URL = process.env.API_URL; 
 
 const FALLBACK_STATUS = {
-lastUpdated: new Date().toISOString(), overall: 'operational', 
-services: [
-{ name: 'Payment API',	status: 'operational', uptime: '99.98%' }, 
-{ name: 'Verve Network', status: 'operational', uptime: '99.95%' }, 
-{ name: 'Settlement',	status: 'operational', uptime: '99.97%' }, 
-]
-}; 
+    lastUpdated: new Date().toISOString(),
+    overall: 'operational',
+    services: [
+        { name: 'Payment API',   status: 'operational', uptime: '99.98%' },
+        { name: 'Verve Network', status: 'operational', uptime: '99.95%' },
+        { name: 'Settlement',    status: 'operational', uptime: '99.97%' },
+    ]
+};
 
-app.get('/api/status', async (req, res) = > {
-if (!API_URL) return res.json(FALLBACK_STATUS);	// standalone mode try {
-const upstream = await fetch(`${API_URL}/status`); res.json(await upstream.json()); 
-} catch (err) {
-res.json(FALLBACK_STATUS);	// API down: degrade, do not crash 
-}
-})
+app.get('/api/status', async (req, res) => {
+    // standalone mode - no payment API configured
+    if (!API_URL) return res.json(FALLBACK_STATUS);
+
+    try {
+        const upstream = await fetch(`${API_URL}/status`);
+        res.json(await upstream.json());
+    } catch (err) {
+        // API down: degrade, do not crash
+        res.json(FALLBACK_STATUS);
+    }
+});
 
 app.get('/api/health', async (req, res) => {
     try {
