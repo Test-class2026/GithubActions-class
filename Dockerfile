@@ -1,7 +1,7 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci # full install, devDependencies included
+RUN npm install # full install, devDependencies included
 COPY . .
 RUN npm prune --omit=dev # strip devDependencies back out
 # ---------- Stage 2: runtime ----------
