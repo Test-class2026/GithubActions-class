@@ -1,6 +1,8 @@
-node_modules npm-debug.log 
-.git 
-.github k8s 
-Dockerfile 
-.dockerignore 
+node_modules
+npm-debug.log
+.git
+.github
+k8s
+Dockerfile
+.dockerignore
 *.md
