@@ -3,14 +3,20 @@ kind: Deployment
 metadata:
   name: portal
 spec:
-  replicas: 2                     # Keep two Pods running at all times
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0        # never drop below 2 running Pods
+      maxSurge: 1              # add one spare while updating
+  minReadySeconds: 5
   selector:
     matchLabels:
-      app: portal                 # Which Pods this Deployment owns
-  template:                       # ---- the Pod template starts here ---
+      app: portal
+  template:
     metadata:
       labels:
-        app: portal               # Must match the selector above
+        app: portal
     spec:
       containers:
         - name: portal
@@ -19,4 +25,28 @@ spec:
             - containerPort: 3000
           env:
             - name: PORT
-              value: "3000"
+              value: '3000'
+          envFrom:
+            - configMapRef:
+                name: portal-config
+            - secretRef:
+                name: portal-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:      # gate traffic until the app answers
+            httpGet:
+              path: /api/status
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:       # restart it if it wedges later
+            httpGet:
+              path: /api/status
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: portal-data

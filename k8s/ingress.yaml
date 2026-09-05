@@ -1,0 +1,38 @@
+# Traefik forwards the full path to the backend, so /api/status would reach
+# the payment API as /api/status - a route it does not have. Strip the
+# prefix first, so the API receives /status.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api--
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: interswitch
+  annotations:
+    # the reference format is <namespace>-<middleware name>@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares:
+      default-strip-api-prefix@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-api
+                port:
+                  number: 4000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portal
+                port:
+                  number: 3000

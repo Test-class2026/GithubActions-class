@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portal-config
+data:
+  API_URL: 'http://payment-api:4000'   # the Service from 2.2
+  LOG_LEVEL: 'info'
+  BOOT_DELAY_MS: '8000'                # simulated slow start
