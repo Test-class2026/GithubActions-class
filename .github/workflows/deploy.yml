@@ -1,9 +1,9 @@
-name: Build and Deploy to k3s
+name: Build and Deploy with Helm
  
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:          # lets you run it by hand from the Actions tab
+  workflow_dispatch:
  
 env:
   IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/interswitch-portal
@@ -30,26 +30,22 @@ jobs:
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest
  
-      - name: Copy the manifests to the cluster
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "k8s/*"
-          target: "/home/ubuntu/interswitch"
+      - name: Write the kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
  
-      - name: Apply the manifests and roll out the new image
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ubuntu/interswitch
-            kubectl apply -f k8s/
-            kubectl set image deployment/portal \
-              portal=${{ env.IMAGE }}:${{ env.TAG }}
-            kubectl rollout status deployment/portal      --timeout=150s
-            kubectl rollout status deployment/payment-api --timeout=150s
-            kubectl get pods -o wide
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+ 
+      - name: Deploy
+        run: |
+          helm upgrade --install interswitch ./chart \
+            --set portal.image.tag=$TAG \
+            --atomic --wait --timeout 5m
+ 
+      - name: Show what is running
+        run: |
+          helm history interswitch
+          kubectl get pods

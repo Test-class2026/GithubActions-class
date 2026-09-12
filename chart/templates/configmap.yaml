@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portal-config
+data:
+  API_URL: "http://payment-api:{{ .Values.paymentApi.port }}"
+  LOG_LEVEL: "{{ .Values.portal.logLevel }}"
+  BOOT_DELAY_MS: "{{ .Values.portal.bootDelayMs }}"

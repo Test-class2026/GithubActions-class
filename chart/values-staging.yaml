@@ -1,0 +1,8 @@
+# Only the differences from values.yaml
+portal:
+  replicas: 1
+  bootDelayMs: "0"
+  logLevel: "debug"
+ 
+paymentApi:
+  replicas: 1

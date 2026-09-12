@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal
+spec:
+  replicas: {{ .Values.portal.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      app: portal
+  template:
+    metadata:
+      labels:
+        app: portal
+    spec:
+      containers:
+        - name: portal
+          image: "{{ .Values.portal.image.repository }}:{{ .Values.portal.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.portal.port }}
+          env:
+            - name: PORT
+              value: "{{ .Values.portal.port }}"
+          envFrom:
+            - configMapRef:
+                name: portal-config
+            - secretRef:
+                name: portal-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: {{ .Values.portal.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/status
+              port: {{ .Values.portal.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: portal-data
