@@ -1,0 +1,16 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: portal
+  labels:
+    app: portal
+spec:
+  selector:
+    matchLabels:
+      app: portal
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+{{- end }}

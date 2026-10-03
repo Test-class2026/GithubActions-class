@@ -31,6 +31,7 @@ spec:
                 name: portal-config
             - secretRef:
                 name: portal-secrets
+                optional: true
           volumeMounts:
             - name: data
               mountPath: /app/data

@@ -1,14 +1,14 @@
 portal:
-  replicas: 2
+  replicas: 1                  # one node, and the monitoring stack needs the room
   image:
     repository: felixanxy/interswitch-portal
     tag: latest
   port: 3000
   bootDelayMs: "8000"
-  logLevel: "info"
+  logLevel: "debug"
  
 paymentApi:
-  replicas: 2
+  replicas: 1
   image:
     repository: felixanxy/interswitch-api
     tag: v1
@@ -20,3 +20,7 @@ storage:
 ingress:
   enabled: true
   className: traefik
+  host: ""                     # supplied by the pipeline, per environment
+ 
+serviceMonitor:
+  enabled: false               # switched on in Section 8, after the CRD exists

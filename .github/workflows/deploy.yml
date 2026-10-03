@@ -39,10 +39,19 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
  
+       - name: Work out the cluster address
+        run: |
+          NODE_IP=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' \
+            | sed -E 's#https://([^:]+):.*#\1#')
+          echo "NODE_IP=$NODE_IP" >> $GITHUB_ENV
+          echo "Deploying to $NODE_IP"
+ 
       - name: Deploy
         run: |
           helm upgrade --install interswitch ./chart \
+            --set portal.image.repository=$IMAGE \
             --set portal.image.tag=$TAG \
+            --set ingress.host=portal.$NODE_IP.nip.io \
             --atomic --wait --timeout 5m
  
       - name: Show what is running
