@@ -23,4 +23,4 @@ ingress:
   host: ""                     # supplied by the pipeline, per environment
  
 serviceMonitor:
-  enabled: false               # switched on in Section 8, after the CRD exists
+  enabled: true               # switched on in Section 8, after the CRD exists-
