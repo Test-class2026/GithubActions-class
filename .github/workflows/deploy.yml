@@ -39,7 +39,7 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
  
-       - name: Work out the cluster address
+      - name: Work out the cluster address
         run: |
           NODE_IP=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' \
             | sed -E 's#https://([^:]+):.*#\1#')
