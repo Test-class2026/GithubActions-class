@@ -24,9 +24,28 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
  
-      - name: Build and push the portal image
+      - name: Build the image (not pushed yet)
+        run: docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+ 
+      - name: Scan the repository for committed secrets
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: secret
+          exit-code: '1'
+ 
+      - name: Scan the image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}:${{ env.TAG }}
+          scan-type: image
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+ 
+      - name: Push the image
         run: |
-          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest
  
