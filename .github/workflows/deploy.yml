@@ -40,7 +40,7 @@ jobs:
         with:
           image-ref: ${{ env.IMAGE }}:${{ env.TAG }}
           scan-type: image
-          severity: HIGH,CRITICAL
+          severity: 
           ignore-unfixed: true
           exit-code: '1'
  
