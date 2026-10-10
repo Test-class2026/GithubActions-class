@@ -64,6 +64,23 @@ jobs:
             | sed -E 's#https://([^:]+):.*#\1#')
           echo "NODE_IP=$NODE_IP" >> $GITHUB_ENV
           echo "Deploying to $NODE_IP"
+          
+      - name: Create the Kubernetes Secret from AWS Secrets Manager
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+        run: |
+          aws secretsmanager get-secret-value \
+            --secret-id interswitch/portal \
+            --query SecretString --output text > /tmp/secret.json
+ 
+          kubectl create secret generic portal-secrets \
+            --from-env-file=<(jq -r 'to_entries|.[]|"\(.key)=\(.value)"' /tmp/secret.json) \
+            --dry-run=client -o yaml | kubectl apply -f -
+ 
+          rm -f /tmp/secret.json
+          kubectl get secret portal-secrets
  
       - name: Deploy
         run: |
