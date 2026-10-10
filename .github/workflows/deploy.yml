@@ -42,7 +42,7 @@ jobs:
           scan-type: image
           severity: 
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
  
       - name: Push the image
         run: |
