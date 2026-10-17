@@ -7,6 +7,9 @@ on:
  
 env:
   IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/interswitch-portal
+
+permissions:
+  contents: write 
  
 jobs:
   deploy:
@@ -48,49 +51,12 @@ jobs:
         run: |
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest
- 
-      - name: Write the kubeconfig
+
+      - name: Record the new image tag in Git
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
-          chmod 600 ~/.kube/config
+          yq -i ".portal.image.tag = \"$TAG\"" chart/values.yaml
  
-      - name: Install Helm
-        uses: azure/setup-helm@v4
- 
-      - name: Work out the cluster address
-        run: |
-          NODE_IP=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' \
-            | sed -E 's#https://([^:]+):.*#\1#')
-          echo "NODE_IP=$NODE_IP" >> $GITHUB_ENV
-          echo "Deploying to $NODE_IP"
-          
-      - name: Create the Kubernetes Secret from AWS Secrets Manager
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
-        run: |
-          aws secretsmanager get-secret-value \
-            --secret-id interswitch/portal \
-            --query SecretString --output text > /tmp/secret.json
- 
-          kubectl create secret generic portal-secrets \
-            --from-env-file=<(jq -r 'to_entries|.[]|"\(.key)=\(.value)"' /tmp/secret.json) \
-            --dry-run=client -o yaml | kubectl apply -f -
- 
-          rm -f /tmp/secret.json
-          kubectl get secret portal-secrets
- 
-      - name: Deploy
-        run: |
-          helm upgrade --install interswitch ./chart \
-            --set portal.image.repository=$IMAGE \
-            --set portal.image.tag=$TAG \
-            --set ingress.host=portal.$NODE_IP.nip.io \
-            --atomic --wait --timeout 5m
- 
-      - name: Show what is running
-        run: |
-          helm history interswitch
-          kubectl get pods
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(deploy): portal $TAG [skip ci]"
+          git push
