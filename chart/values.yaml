@@ -1,26 +1,22 @@
 portal:
-  replicas: 1                  # one node, and the monitoring stack needs the room
+  replicas: 1 # one node, and the monitoring stack needs the room
   image:
     repository: felixanxy/interswitch-portal
-    tag: latest
+    tag: "2767255"
   port: 3000
   bootDelayMs: "8000"
   logLevel: "debug"
- 
 paymentApi:
   replicas: 1
   image:
     repository: felixanxy/interswitch-api
     tag: v1
   port: 4000
- 
 storage:
   size: 1Gi
- 
 ingress:
   enabled: true
   className: traefik
-  host: ""                     # supplied by the pipeline, per environment
- 
+  host: "" # supplied by the pipeline, per environment
 serviceMonitor:
-  enabled: false              # switched 
+  enabled: false # switched 
