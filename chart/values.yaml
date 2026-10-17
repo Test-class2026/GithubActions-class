@@ -2,7 +2,7 @@ portal:
   replicas: 1 # one node, and the monitoring stack needs the room
   image:
     repository: felixanxy/interswitch-portal
-    tag: "2767255"
+    tag: "e93c934"
   port: 3000
   bootDelayMs: "8000"
   logLevel: "debug"
